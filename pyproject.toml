@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evencheck"
+version = "1.0.0"
+description = "The most inefficient way to check if a number is even."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "GussApenas" }
+]
+requires-python = ">=3.8"
+
+dependencies = [
+    "aiohttp",
+    "aiofiles"
+]
+
+[project.urls]
+Repository = "https://github.com/GussApenass/evencheck"
