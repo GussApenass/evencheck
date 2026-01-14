@@ -13,8 +13,10 @@ pip install evencheck
 ```python
 from evencheck import IsEven
 
-IsEven(2)# True
-IsEven(7)# False
+number_true = IsEven(2) # True
+print(number_true)
+number_false = IsEven(7) # False
+print(number_false)
 ```
 
 ## Hot it Works
