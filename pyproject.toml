@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "evencheck"
-version = "1.5.0"
+version = "2.0.0"
 description = "The most inefficient way to check if a number is even."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -20,3 +20,6 @@ dependencies = [
 
 [project.urls]
 Repository = "https://github.com/GussApenass/evencheck"
+
+[tool.setuptools.package-data]
+evencheck = ["*.txt"]

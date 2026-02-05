@@ -1,5 +1,5 @@
-from .is_even import iseven
+from .iseven import IsEven
 
-__version__ = "1.5.0"
+__version__ = "2.0.0"
 
-__all__ = ["iseven"]
+__all__ = ['isEven']

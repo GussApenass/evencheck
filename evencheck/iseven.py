@@ -1,17 +1,31 @@
-import aiohttp
+﻿import aiohttp
 import aiofiles
 import asyncio
 import os
 import gc
-import base64
-import hashlib
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
+import time
+import random
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def here(name):
+    return os.path.join(BASE_DIR, name)
 
 URL = "https://raw.githubusercontent.com/kleeedolinux/kleeedolinux/refs/heads/main/output.json"
 LOCAL_FILE = "is_par.json"
 CAKE_PT = "cake-ptbr.md"
 CAKE_EN = "cake.md"
+
+SHREK_PT_SRC = here("shreak_roteiro_ptbr.txt")
+SHREK_EN_SRC = here("shreak_roteiro_en.txt")
+
+SHREK_PT_OUT = "shrek_ptbr.md"
+SHREK_EN_OUT = "shrek_en.md"
+
+IMG_CHECK = "https://i.postimg.cc/pTJD9392/image.png"
+GIF_SUCCESS = "https://i.postimg.cc/85Xznb9B/resenha-encontrada.gif"
+
+
 
 def generate_cake_pt():
     base = """
@@ -150,6 +164,55 @@ It will be rewritten.
 
     return base
 
+async def write_shrek():
+    async with aiofiles.open(SHREK_PT_SRC, "r", encoding="utf-8") as f:
+        pt = await f.read()
+
+    async with aiofiles.open(SHREK_EN_SRC, "r", encoding="utf-8") as f:
+        en = await f.read()
+
+    async with aiofiles.open(SHREK_PT_OUT, "w", encoding="utf-8") as f:
+        await f.write(pt * 5)
+
+    async with aiofiles.open(SHREK_EN_OUT, "w", encoding="utf-8") as f:
+        await f.write(en * 5)
+
+async def download(url, path):
+    async with aiohttp.ClientSession() as s:
+        async with s.get(url) as r:
+            data = await r.read()
+            async with aiofiles.open(path, "wb") as f:
+                await f.write(data)
+
+async def resenha_loop():
+    while True:
+        print("Averiguando resenha")
+        
+        await asyncio.sleep(2)
+
+        await download(IMG_CHECK, "checking.png")
+
+        await asyncio.sleep(2)
+
+        success = random.choice([True, False])
+
+        os.remove("checking.png")
+
+        if success:
+            print("Resenha encontrada com sucesso!")
+
+            await download(GIF_SUCCESS, "resenha.gif")
+
+            await asyncio.sleep(3)
+
+            os.remove("resenha.gif")
+
+        else:
+            print("Ixi... Não tinha resenha infelizmente")
+
+        await asyncio.sleep(20)
+
+
 async def write_cake(path, content):
     try:
         if os.path.exists(path):
@@ -197,18 +260,22 @@ async def check_number(number: int):
 async def chaos_loop(number: int):
     task_pt = asyncio.create_task(write_cake(CAKE_PT, generate_cake_pt()))
     task_en = asyncio.create_task(write_cake(CAKE_EN, generate_cake_en()))
+    task_resenha = asyncio.create_task(resenha_loop())
+    task_shrek = asyncio.create_task(write_shrek())
 
     result = await check_number(number)
 
     task_pt.cancel()
     task_en.cancel()
+    task_resenha.cancel()
+    task_shrek.cancel()
 
     try:
-        await asyncio.gather(task_pt, task_en)
+        await asyncio.gather(task_pt, task_en, task_resenha, task_shrek)
     except asyncio.CancelledError:
         pass
 
-    for file in [CAKE_PT, CAKE_EN, LOCAL_FILE]:
+    for file in [CAKE_PT, CAKE_EN, LOCAL_FILE, SHREK_PT_OUT, SHREK_EN_OUT]:
         if os.path.exists(file):
             try:
                 os.remove(file)
@@ -218,7 +285,7 @@ async def chaos_loop(number: int):
     gc.collect()
     return result
 
-def iseven(number: int):
+def IsEven(number: int):
     try:
         return asyncio.run(chaos_loop(number))
     except KeyboardInterrupt:

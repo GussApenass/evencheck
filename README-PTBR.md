@@ -11,11 +11,11 @@ pip install evencheck
 # Uso
 
 ```python
-from evencheck import iseven
+from evencheck import IsEven
 
-number_true = iseven(2) # True
+number_true = IsEven(2) # True
 print(number_true)
-number_false = iseven(7) # False
+number_false = IsEven(7) # False
 print(number_false)
 ```
 
